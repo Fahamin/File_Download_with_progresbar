@@ -35,6 +35,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class MainActivity extends AppCompatActivity {
+    ProgressDialog mProgressDialog;
 
     // button to show progress dialog
     Button btnShowProgress;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         btnShowProgress = (Button) findViewById(R.id.btnProgressBar);
         // Image view to show image after downloading
         my_image = (ImageView) findViewById(R.id.my_image);
+
         /**
          * Show Progress bar click event
          * */
@@ -120,7 +122,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showDialog(progress_bar_type);
+         //   showDialog(progress_bar_type);
+            mProgressDialog = new ProgressDialog(MainActivity.this);
+            // Set your progress dialog Message
+            mProgressDialog.setMessage("Downloading, Please Wait!");
+            mProgressDialog.setIndeterminate(false);
+            mProgressDialog.setMax(100);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            // Show progress dialog
+            mProgressDialog.show();
         }
 
         /**
@@ -136,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 conection.connect();
                 // this will be useful so that you can show a tipical 0-100% progress bar
                 int lenghtOfFile = conection.getContentLength();
-                String filepath = Environment.getDownloadCacheDirectory().getPath();
+
                 // download the file
                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
                 // Output stream
@@ -178,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
          * */
         protected void onProgressUpdate(String... progress) {
             // setting progress percentage
-            pDialog.setProgress(Integer.parseInt(progress[0]));
+            mProgressDialog.setProgress(Integer.parseInt(progress[0]));
         }
         public  String getMimeType(Uri uri) {
             String mimeType = null;
@@ -200,7 +210,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String file_url) {
             // dismiss the dialog after the file was downloaded
-            dismissDialog(progress_bar_type);
+           // dismissDialog(progress_bar_type);
+
+            mProgressDialog.dismiss();
+
+
 
             // Displaying downloaded image into image view
             // Reading image path from sdcard
@@ -211,4 +225,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 }
